@@ -1,0 +1,39 @@
+{
+  "name": "zeros",
+  "version": "1.0.0",
+  "description": "Zeros Origin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon — exec babel-node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/napol-zeros/zeros-origin.git"
+  },
+  "author": "Napol Thanarangkaun",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/napol-zeros/zeros-origin/issues"
+  },
+  "homepage": "https://github.com/napol-zeros/zeros-origin#readme",
+  "dependencies": {
+    "crypto-js": "^4.0.0",
+    "express": "^4.17.1",
+    "express-nobots": "^1.0.5",
+    "fs": "^0.0.1-security",
+    "http": "^0.0.1-security",
+    "ngrok": "^3.4.0",
+    "path": "^0.12.7",
+    "serve-favicon": "^2.5.0",
+    "socket.io": "^3.1.0",
+    "ws": "^7.4.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/node": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "nodemon": "^2.0.7"
+  }
+}
