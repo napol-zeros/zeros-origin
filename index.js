@@ -4,7 +4,6 @@ const path = require('path')
 const express = require('express')
 const nobots = require('express-nobots')
 var favicon = require('serve-favicon')
-const port = process.env.PORT || 5000
 const app = express()
 const ngrok = require('ngrok')
 const main = require('./modules/origin')
@@ -14,7 +13,7 @@ const server = http.createServer(app)
 const wss = new WebSocket.Server({ server: server })
 
 app.get('*', function(req, res, next){
-  if (req.headers.host !== "localhost:5000") {
+  if (!req.headers.host.includes("localhost")) {
     if (req.get('x-forwarded-proto') != "https") {
         res.set('x-forwarded-proto', 'https')
         res.redirect('https://' + req.get('host') + req.url)
@@ -29,7 +28,7 @@ app.get('*', function(req, res, next){
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname + '/html/index.html'))
     main.createNode()
-    if (req.headers.host !== "localhost:5000") {
+    if (!req.headers.host.includes("localhost")) {
       let wsp = new WebSocket('ws://origin.zeros.run');
       wsp.on('open', function open() {
           console.log('Peer sent: ' + req.headers.host)
@@ -43,7 +42,7 @@ app.get('/', (req, res) => {
 
 app.get('/start-ngrok', (req, res) => {
   let url = '';
-  if (req.headers.host === "localhost:5000") {
+  if (req.headers.host.includes("localhost")) {
     (async function() {
       url = await ngrok.connect(5000)
       res.sendFile(path.join(__dirname + '/html/ngrok.html'))
@@ -63,7 +62,7 @@ app.get('/start-ngrok', (req, res) => {
 })
 
 app.get('/disconnect', (req, res) => {
-  if (req.headers.host === "localhost:5000") {
+  if (req.headers.host.includes("localhost")) {
     (async function() {
       await ngrok.disconnect()
     })()
@@ -85,7 +84,7 @@ wss.on('error', (error) => {
   console.log('client error', error)
 })
 
-server.listen(port, () => {
+server.listen(0, () => {
   console.log('\nZeros Origin Network is running... (Ctrl + c to exit)\n')
-  console.log('Socket port: '+ port +'\n')
+  console.log('Socket port: '+ server.address().port +'\n')
 })
