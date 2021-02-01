@@ -11,6 +11,7 @@ require('./routes/main')(path, app, main)
 
 const server = http.createServer(app)
 const wss = new WebSocket.Server({ server: server })
+var port = process.env.PORT
 
 app.get('*', function(req, res, next){
   if (!req.headers.host.includes("localhost")) {
@@ -44,7 +45,8 @@ app.get('/start-ngrok', (req, res) => {
   let url = '';
   if (req.headers.host.includes("localhost")) {
     (async function() {
-      url = await ngrok.connect(5000)
+      url = await ngrok.connect(req.socket.localPort)
+      console.log(url)
       res.sendFile(path.join(__dirname + '/html/ngrok.html'))
       let wsp = new WebSocket('ws://origin.zeros.run');
       wsp.on('open', function open() {
@@ -87,4 +89,5 @@ wss.on('error', (error) => {
 server.listen(0, () => {
   console.log('\nZeros Origin Network is running... (Ctrl + c to exit)\n')
   console.log('Socket port: '+ server.address().port +'\n')
+  port = server.address().port
 })
