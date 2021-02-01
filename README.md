@@ -1,3 +1,3 @@
 # Zeros Origin
 
-The origin is begin
+The origin is P2P Network. It's an experiment.
