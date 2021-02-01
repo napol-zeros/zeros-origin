@@ -11,7 +11,7 @@ require('./routes/main')(path, app, main)
 
 const server = http.createServer(app)
 const wss = new WebSocket.Server({ server: server })
-var port = process.env.PORT
+var port = process.env.PORT || 0
 
 app.get('*', function(req, res, next){
   if (!req.headers.host.includes("localhost")) {
@@ -86,7 +86,7 @@ wss.on('error', (error) => {
   console.log('client error', error)
 })
 
-server.listen(0, () => {
+server.listen(port, () => {
   console.log('\nZeros Origin Network is running... (Ctrl + c to exit)\n')
   console.log('Socket port: '+ server.address().port +'\n')
   port = server.address().port
