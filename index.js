@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname + '/html/index.html'))
     main.createNode()
     if (!req.headers.host.includes("localhost")) {
-      let wsp = new WebSocket('ws://origin.zeros.run');
+      let wsp = new WebSocket('ws://origin.zeros.run')
       wsp.on('open', function open() {
           console.log('Peer sent: ' + req.headers.host)
           wsp.send(req.headers.host)
