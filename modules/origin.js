@@ -6,7 +6,7 @@ const fs = require('fs')
 
 var nodeID = 'NULL'
 var randomString = randomString()
-var dir = __dirname + '/../model/';
+var dir = __dirname + '/../model/'
 
 function randomString() {
     let length = 80
@@ -56,7 +56,7 @@ function registerPeer(id) {
 function connectPeer(address, id, req, res) {
     let ws_scheme = ''
     if (req.protocol == "https:") {
-        ws_scheme = "wss://";
+        ws_scheme = "wss://"
     } else {
         ws_scheme = "ws://"
     }

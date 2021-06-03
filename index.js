@@ -48,7 +48,7 @@ app.get('/start-ngrok', (req, res) => {
     (async function() {
       url = await ngrok.connect(req.socket.localPort)
       res.sendFile(path.join(__dirname + '/html/ngrok.html'))
-      let wsp = new WebSocket('ws://origin.zeros.run');
+      let wsp = new WebSocket('ws://origin.zeros.run')
       wsp.on('open', function open() {
           console.log('Peer sent: ' + url)
           wsp.send(url)
