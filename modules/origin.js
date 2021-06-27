@@ -42,7 +42,7 @@ function createNode () {
 }
 
 function registerPeer(id) {
-    let wsp = new WebSocket('ws://origin.zeros.run');
+    let wsp = new WebSocket('ws://origin.zeros.run')
     wsp.on('open', function open() {
         wsp.send(id)
         console.log('Peer sent: ' + id)
@@ -60,7 +60,7 @@ function connectPeer(address, id, req, res) {
     } else {
         ws_scheme = "ws://"
     }
-    let wsp = new WebSocket(ws_scheme + address);
+    let wsp = new WebSocket(ws_scheme + address)
     wsp.on('open', function open() {
         fs.readFile(dir + 'identity', 'utf8', function readFileCallback(err, data){
             if (err){
