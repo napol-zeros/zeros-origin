@@ -1,3 +1,5 @@
+// Zeros Origin index
+
 const WebSocket = require('ws')
 const http = require('http')
 const path = require('path')
@@ -42,6 +44,7 @@ app.get('/', (req, res) => {
     }
 })
 
+// Start ngrok for access to local.
 app.get('/start-ngrok', (req, res) => {
   let url = '';
   if (req.headers.host.includes("localhost")) {
@@ -63,6 +66,7 @@ app.get('/start-ngrok', (req, res) => {
   }
 })
 
+// Disconnect from ngrok server.
 app.get('/disconnect', (req, res) => {
   if (req.headers.host.includes("localhost")) {
     (async function() {
@@ -72,20 +76,24 @@ app.get('/disconnect', (req, res) => {
   }
 })
 
+// Add favicon and block robots.
 app.use(nobots({block:true}))
 app.use(favicon(__dirname + '/favicon.ico'))
 app.use(express.static('html'));
 
+// Show console log when get a message.
 wss.on('connection', function connection(ws) {
   ws.on('message', function incoming(message) {
     console.log('Server received: %s', message + '\n')
   })
 })
 
+// Echo error.
 wss.on('error', (error) => {
   console.log('client error', error)
 })
 
+// Listen server.
 server.listen(port, () => {
   console.log('\nZeros Origin Network is running... (Ctrl + c to exit)\n')
   console.log('Socket port: '+ server.address().port +'\n')
