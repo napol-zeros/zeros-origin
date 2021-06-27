@@ -1,4 +1,4 @@
-// Zeros Origin main
+/** Zeros Origin main */
 
 const WebSocket = require('ws')
 const SHA256 = require('crypto-js/sha256')
@@ -8,7 +8,7 @@ var nodeID = 'NULL'
 var randomString = randomString()
 var dir = __dirname + '/../model/'
 
-// Random string for id creation.
+/** Random string for id creation. */
 function randomString() {
     let length = 80
     let result = ''
@@ -20,7 +20,7 @@ function randomString() {
     return result
  }
 
-// Create node and save id in model folder.
+/** Create node and save id in model folder. */
 function createNode () {
     if (!fs.existsSync(dir)){
         fs.mkdirSync(dir)
@@ -43,7 +43,7 @@ function createNode () {
     }
 }
 
-// Register peer to Zeros Origin.
+/** Register peer to Zeros Origin. */
 function registerPeer(id) {
     let wsp = new WebSocket('ws://origin.zeros.run')
     wsp.on('open', function open() {
@@ -56,7 +56,7 @@ function registerPeer(id) {
     })
 }
 
-// Connect peer to Zeros Origin.
+/** Connect peer to Zeros Origin. */
 function connectPeer(address, id, req, res) {
     let ws_scheme = ''
     if (req.protocol == "https:") {
