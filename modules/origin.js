@@ -1,51 +1,52 @@
 /** Zeros Origin Main. */
 
-const WebSocket = require( 'ws' );
-const SHA256 = require( 'crypto-js/sha256' );
+const web_socket = require( 'ws' );
+const sha256 = require( 'crypto-js/sha256' );
 const fs = require( 'fs' );
 
-var nodeID = 'NULL';
-var randomString = randomString();
-var dir = __dirname + '/../model/';
+let node_id = 'NULL';
+const random_id = random_string();
+const dir = __dirname + '/../model/';
 
 /** Random string for id creation. */
-function randomString() {
+function random_string() {
     let length = 80;
     let result = '';
     let all = 'zerosZEROS01';
-    var allLength = all.length;
-    for ( var i = 0; i < length; i++ ) {
+    let allLength = all.length;
+    for ( let i = 0; i < length; i++ ) {
        result += all.charAt( Math.floor( Math.random() * allLength) );
     }
     return result;
  }
 
 /** Create node and save id in model folder. */
-function createNode () {
+function create_node () {
     if ( !fs.existsSync(dir) ){
         fs.mkdirSync( dir );
-        fs.open( dir + 'identity','r',function( err, fd ){
+        fs.open( dir + 'identity','r',function( err ){
             if ( err ) {
                 obj = JSON.parse( '{}' );
                 if ( Object.keys(obj).length === 0 ) {
-                    nodeID = SHA256( randomString).toString();
-                    console.log( 'Node ID: ' + nodeID + '\n' );
-                    let input = JSON.parse( '{"node_id":"'+ nodeID +'"}' );
+                    node_id = sha256( random_id ).toString();
+                    console.log( 'Node ID: ' + node_id + '\n' );
+                    let date = new Date();
+                    let input = JSON.parse( '{"node_id":"'+ node_id +'", "date":"'+ date +'"}' );
                     json = JSON.stringify( input );
                     fs.writeFile( dir + 'identity', json, ( err ) => {
                         if ( err ) throw err;
                         console.log( 'Saved node id\n' );
                     })
                 }
-                registerPeer( nodeID );
+                register_peer( node_id );
             }
         })
     }
 }
 
 /** Register peer to Zeros Origin. */
-function registerPeer(id) {
-    let wsp = new WebSocket( 'ws://origin.zeros.run' );
+function register_peer(id) {
+    let wsp = new web_socket( 'ws://origin.zeros.run' );
     wsp.on('open', function open() {
         wsp.send( id );
         console.log( 'Peer sent: ' + id );
@@ -57,14 +58,14 @@ function registerPeer(id) {
 }
 
 /** Connect peer to Zeros Origin. */
-function connectPeer( address, id, req, res ) {
+function connect_peer( address, id, req, res ) {
     let ws_scheme = '';
     if ( req.protocol == "https:" ) {
         ws_scheme = "wss://";
     } else {
         ws_scheme = "ws://";
     }
-    let wsp = new WebSocket( ws_scheme + address );
+    let wsp = new web_socket( ws_scheme + address );
     wsp.on( 'open', function open() {
         fs.readFile( dir + 'identity', 'utf8', function readFileCallback( err, data ){
             if ( err ) {
@@ -90,4 +91,4 @@ function connectPeer( address, id, req, res ) {
     })
 }
 
-module.exports = { createNode, connectPeer }
+module.exports = { create_node, connect_peer }

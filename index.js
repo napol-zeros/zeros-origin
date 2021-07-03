@@ -1,6 +1,6 @@
 /** Zeros Origin Index. */
 
-const WebSocket = require( 'ws' );
+const web_socket = require( 'ws' );
 const http = require( 'http' );
 const path = require( 'path' );
 const express = require( 'express' );
@@ -10,7 +10,7 @@ const app = express();
 const ngrok = require( 'ngrok' );
 const main = require( './modules/origin' );
 const server = http.createServer( app );
-const wss = new WebSocket.Server( { server: server } );
+const wss = new web_socket.Server( { server: server } );
 
 var port = process.env.PORT || 0;
 
@@ -31,9 +31,9 @@ app.get( '*', function( req, res, next ) {
 
 app.get( '/', ( req, res ) => {
     res.sendFile (path.join( __dirname + '/html/index.html') );
-    main.createNode();
+    main.create_node();
     if ( !req.headers.host.includes( "localhost" ) ) {
-    	let wsp = new WebSocket( 'ws://origin.zeros.run' );
+    	let wsp = new web_socket( 'ws://origin.zeros.run' );
       	wsp.on('open', function open() {
         	console.log( 'Peer sent: ' + req.headers.host );
         	wsp.send( req.headers.host );
@@ -51,7 +51,7 @@ app.get( '/start-ngrok', ( req, res ) => {
 		( async function() {
 			url = await ngrok.connect(req.socket.localPort);
 			res.sendFile(path.join(__dirname + '/html/ngrok.html'));
-			let wsp = new WebSocket('ws://origin.zeros.run');
+			let wsp = new web_socket('ws://origin.zeros.run');
 			wsp.on('open', function open() {
 				console.log('Peer sent: ' + url);
 				wsp.send(url);
