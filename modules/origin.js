@@ -22,8 +22,12 @@ function random_string() {
 
 /** Create node and save id in model folder. */
 function create_node () {
-    if ( !fs.existsSync(dir) ){
+    /** Create model folder if not exist. */
+    if ( !fs.existsSync( dir ) ){
         fs.mkdirSync( dir );
+    }
+    /** Create identity file if not exist. */
+    if ( !fs.existsSync(dir + 'identity' ) ){
         fs.open( dir + 'identity','r',function( err ){
             if ( err ) {
                 obj = JSON.parse( '{}' );
@@ -40,7 +44,7 @@ function create_node () {
                 }
                 register_peer( node_id );
             }
-        })
+        });
     }
 }
 
