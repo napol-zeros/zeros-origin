@@ -1,6 +1,6 @@
 /** Zeros Origin Index. */
 
-const web_socket = require( 'ws' );
+const webSocket = require( 'ws' );
 const http = require( 'http' );
 const path = require( 'path' );
 const express = require( 'express' );
@@ -10,7 +10,10 @@ const app = express();
 const ngrok = require( 'ngrok' );
 const main = require( './modules/origin' );
 const server = http.createServer( app );
-const wss = new web_socket.Server( { server: server } );
+const wss = new webSocket.Server( { server: server } );
+const fs = require( 'fs' );
+
+const dir = __dirname + '/../model/';
 
 var port = process.env.PORT || 0;
 
@@ -31,9 +34,9 @@ app.get( '*', function( req, res, next ) {
 
 app.get( '/', ( req, res ) => {
     res.sendFile (path.join( __dirname + '/html/index.html') );
-    main.create_node();
+    main.createNode();
     if ( !req.headers.host.includes( "localhost" ) ) {
-    	let wsp = new web_socket( 'ws://origin.zeros.run' );
+    	let wsp = new webSocket( 'ws://origin.zeros.run' );
       	wsp.on('open', function open() {
         	console.log( 'Peer sent: ' + req.headers.host );
         	wsp.send( req.headers.host );
@@ -51,26 +54,45 @@ app.get( '/start-ngrok', ( req, res ) => {
 		( async function() {
 			url = await ngrok.connect(req.socket.localPort);
 			res.sendFile(path.join(__dirname + '/html/ngrok.html'));
-			let wsp = new web_socket('ws://origin.zeros.run');
+			let wsp = new webSocket('ws://origin.zeros.run');
 			wsp.on('open', function open() {
 				console.log('Peer sent: ' + url);
 				wsp.send(url);
+				/** Add peer to peers list. */
+				fs.open( dir + 'peers','r',function( err ){
+					if ( err ) {
+						obj = JSON.parse( '{}' );
+						if ( Object.keys(obj).length === 0 ) {
+							let peerID = readPeerID();
+							console.log( 'Add peer ID: ' + peerID + '\n' );
+							let origin = 'origin.zeros.run'
+							let input = JSON.parse( '{"peerID":"'+ peerID +'", "url":"'+ url +'", "origin":"'+ origin +'"}' );
+							json = JSON.stringify( input );
+							fs.writeFile( dir + 'peers', json, ( err ) => {
+								if ( err ) throw err;
+								console.log( 'Saved peer to peers list.\n' );
+							})
+						}
+					} else {
+
+					}
+				});
 			})
 			wsp.on('error', (error) => {
 				console.log('client error', error);
 			})
-   		} )()
+   		} )();
   	} else {
     	res.sendFile(path.join(__dirname + '/html/no-ngrok.html'));
   	}
 });
 
 /** Disconnect from ngrok server. */
-app.get( '/disconnect', ( req, res ) => {
+app.get( '/close-ngrok', ( req, res ) => {
 	if (req.headers.host.includes( "localhost" )) {
     	(async function() {
       		await ngrok.disconnect();
-    	})()
+    	})();
     	res.sendFile( path.join(__dirname + '/html/disconnect.html' ));
   	}
 });

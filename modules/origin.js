@@ -1,15 +1,16 @@
 /** Zeros Origin Main. */
 
-const web_socket = require( 'ws' );
+const webSocket = require( 'ws' );
 const sha256 = require( 'crypto-js/sha256' );
 const fs = require( 'fs' );
+const { json } = require('express');
 
-let node_id = 'NULL';
-const random_id = random_string();
+let peerID = 'NULL';
+const randomID = randomString();
 const dir = __dirname + '/../model/';
 
 /** Random string for id creation. */
-function random_string() {
+function randomString() {
     let length = 80;
     let result = '';
     let all = 'zerosZEROS01';
@@ -20,8 +21,8 @@ function random_string() {
     return result;
  }
 
-/** Create node and save id in model folder. */
-function create_node () {
+/** Create peer and save id in model folder. */
+function createNode () {
     /** Create model folder if not exist. */
     if ( !fs.existsSync( dir ) ){
         fs.mkdirSync( dir );
@@ -32,62 +33,67 @@ function create_node () {
             if ( err ) {
                 obj = JSON.parse( '{}' );
                 if ( Object.keys(obj).length === 0 ) {
-                    node_id = sha256( random_id ).toString();
-                    console.log( 'Node ID: ' + node_id + '\n' );
+                    peerID = sha256( randomID ).toString();
+                    console.log( 'Peer ID: ' + peerID + '\n' );
                     let date = new Date();
-                    let input = JSON.parse( '{"node_id":"'+ node_id +'", "date":"'+ date +'"}' );
+                    let input = JSON.parse( '{"peerID":"'+ peerID +'", "date":"'+ date +'"}' );
                     json = JSON.stringify( input );
                     fs.writeFile( dir + 'identity', json, ( err ) => {
                         if ( err ) throw err;
-                        console.log( 'Saved node id\n' );
-                    })
+                        console.log( 'Saved peer id.\n' );
+                    });
                 }
-                register_peer( node_id );
+                registerPeer( peerID );
             }
         });
     }
 }
 
 /** Register peer to Zeros Origin. */
-function register_peer(id) {
-    let wsp = new web_socket( 'ws://origin.zeros.run' );
+function registerPeer(id) {
+    let wsp = new webSocket( 'ws://origin.zeros.run' );
     wsp.on('open', function open() {
         wsp.send( id );
         console.log( 'Peer sent: ' + id );
-    })
+    });
 
     wsp.on( 'error', ( error ) => {
         console.log( 'client error', error );
-    })
+    });
+}
+
+/** Read peer id from identity file. */
+function readPeerID() {
+    fs.readFile( dir + 'identity', 'utf8', function readFileCallback( err, data ){
+        if ( err ) {
+            return err;
+        } else {
+            obj = JSON.parse( data );
+            json = JSON.stringify( obj );
+            if ( json.includes( id ) ) {
+                wsp.send( json );
+                return json;
+                
+            } else {
+                return 'denied';
+            }
+        }
+    });
 }
 
 /** Connect peer to Zeros Origin. */
-function connect_peer( address, id, req, res ) {
-    let ws_scheme = '';
+function connectPeer( address, id, req, res ) {
+    let wsScheme = '';
     if ( req.protocol == "https:" ) {
-        ws_scheme = "wss://";
+        wsScheme = "wss://";
     } else {
-        ws_scheme = "ws://";
+        wsScheme = "ws://";
     }
-    let wsp = new web_socket( ws_scheme + address );
+    let wsp = new webSocket( wsScheme + address );
     wsp.on( 'open', function open() {
-        fs.readFile( dir + 'identity', 'utf8', function readFileCallback( err, data ){
-            if ( err ) {
-                console.log( err );
-            } else {
-                obj = JSON.parse( data );
-                json = JSON.stringify( obj );
-                if ( json.includes( id ) ) {
-                    wsp.send( json );
-                    console.log( 'Peer sent: ' + json );
-                    res.send( 'Peer sent' );
-                    
-                } else {
-                    console.log( 'denied' );
-                    res.send( 'denied' );
-                }
-            }
-        })
+        let peerID = readPeerID();
+        console.log( peerID );
+        res.send( peerID );
     })
 
     wsp.on( 'error', ( error ) => {
@@ -95,4 +101,4 @@ function connect_peer( address, id, req, res ) {
     })
 }
 
-module.exports = { create_node, connect_peer }
+module.exports = { createNode, connectPeer }
