@@ -49,7 +49,7 @@ app.get( '/', ( req, res ) => {
 
 /** Start ngrok for access to local. */
 app.get( '/start-ngrok', ( req, res ) => {
-      let url = '';
+    let url = '';
     if ( req.headers.host.includes("localhost") ) {
         ( async function() {
             url = await ngrok.connect(req.socket.localPort);
@@ -91,10 +91,10 @@ app.get( '/start-ngrok', ( req, res ) => {
 app.get( '/close-ngrok', ( req, res ) => {
     if (req.headers.host.includes( "localhost" )) {
         (async function() {
-              await ngrok.disconnect();
+            await ngrok.disconnect();
         })();
         res.sendFile( path.join(__dirname + '/html/disconnect.html' ));
-      }
+    }
 });
 
 /** Add favicon and block robots. */
@@ -106,7 +106,7 @@ app.use( express.static('html') );
 wss.on( 'connection', function connection( ws ) {
     ws.on( 'message', function incoming( message ) {
         console.log( 'Server received: %s', message + '\n' );
-      });
+    });
 });
 
 /** Echo error. */
@@ -118,5 +118,5 @@ wss.on('error', (error) => {
 server.listen(port, () => {
     console.log( '\nZeros Origin Network is running... (Ctrl + c to exit)\n' );
     console.log( 'Socket port: '+ server.address().port +'\n' );
-      port = server.address().port;
+    port = server.address().port;
 });
