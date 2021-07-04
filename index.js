@@ -63,7 +63,7 @@ app.get( '/start-ngrok', ( req, res ) => {
 					if ( err ) {
 						obj = JSON.parse( '{}' );
 						if ( Object.keys(obj).length === 0 ) {
-							let identityModel = fs.readFileSync( dir + 'identity' );
+						    let identityModel = fs.readFileSync( dir + 'identity' );
 							let peerJson = JSON.parse(identityModel);
 							let peerID = peerJson.peerID;
 							console.log( 'Add peer ID: ' + peerID + '\n' );
