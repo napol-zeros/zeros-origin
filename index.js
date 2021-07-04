@@ -13,9 +13,9 @@ const server = http.createServer( app );
 const wss = new webSocket.Server( { server: server } );
 const fs = require( 'fs' );
 
-const dir = __dirname + '/../model/';
+const dir = __dirname + '/model/';
 
-var port = process.env.PORT || 0;
+let port = process.env.PORT || 0;
 
 require( './routes/main' )( path, app, main );
 
@@ -45,7 +45,7 @@ app.get( '/', ( req, res ) => {
     		console.log('client error', error);
       	})
     }
-})
+});
 
 /** Start ngrok for access to local. */
 app.get( '/start-ngrok', ( req, res ) => {
@@ -63,7 +63,9 @@ app.get( '/start-ngrok', ( req, res ) => {
 					if ( err ) {
 						obj = JSON.parse( '{}' );
 						if ( Object.keys(obj).length === 0 ) {
-							let peerID = readPeerID();
+							let identityModel = fs.readFileSync( dir + 'identity' );
+							let peerJson = JSON.parse(identityModel);
+							let peerID = peerJson.peerID;
 							console.log( 'Add peer ID: ' + peerID + '\n' );
 							let origin = 'origin.zeros.run'
 							let input = JSON.parse( '{"peerID":"'+ peerID +'", "url":"'+ url +'", "origin":"'+ origin +'"}' );
@@ -73,8 +75,6 @@ app.get( '/start-ngrok', ( req, res ) => {
 								console.log( 'Saved peer to peers list.\n' );
 							})
 						}
-					} else {
-
 					}
 				});
 			})

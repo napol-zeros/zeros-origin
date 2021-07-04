@@ -3,7 +3,7 @@
 const webSocket = require( 'ws' );
 const sha256 = require( 'crypto-js/sha256' );
 const fs = require( 'fs' );
-const { json } = require('express');
+let { json } = require('express');
 
 let peerID = 'NULL';
 const randomID = randomString();
@@ -28,7 +28,7 @@ function createNode () {
         fs.mkdirSync( dir );
     }
     /** Create identity file if not exist. */
-    if ( !fs.existsSync(dir + 'identity' ) ){
+    if ( !fs.existsSync( dir + 'identity' ) ){
         fs.open( dir + 'identity','r',function( err ){
             if ( err ) {
                 obj = JSON.parse( '{}' );
@@ -62,25 +62,6 @@ function registerPeer(id) {
     });
 }
 
-/** Read peer id from identity file. */
-function readPeerID() {
-    fs.readFile( dir + 'identity', 'utf8', function readFileCallback( err, data ){
-        if ( err ) {
-            return err;
-        } else {
-            obj = JSON.parse( data );
-            json = JSON.stringify( obj );
-            if ( json.includes( id ) ) {
-                wsp.send( json );
-                return json;
-                
-            } else {
-                return 'denied';
-            }
-        }
-    });
-}
-
 /** Connect peer to Zeros Origin. */
 function connectPeer( address, id, req, res ) {
     let wsScheme = '';
@@ -94,6 +75,13 @@ function connectPeer( address, id, req, res ) {
         let peerID = readPeerID();
         console.log( peerID );
         res.send( peerID );
+        if ( json.includes( id ) ) {
+            wsp.send( json );
+            console.log( peerID );
+            res.send( peerID );
+        } else {
+            return 'denied';
+        }
     })
 
     wsp.on( 'error', ( error ) => {
