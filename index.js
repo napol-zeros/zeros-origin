@@ -59,9 +59,9 @@ app.get( '/start-ngrok', ( req, res ) => {
                 console.log('Peer sent: ' + url);
                 wsp.send(url);
                 /** Add peer to peers list. */
-                fs.open( dir + 'peers.json','r',function( err ){
+                fs.readFile( dir + 'peers.json', 'utf8', (err, data) => {
                     if ( err ) {
-                        obj = JSON.parse( '{}' );
+                        let obj = JSON.parse( '{}' );
                         if ( Object.keys(obj).length === 0 ) {
                             let identityModel = fs.readFileSync( dir + 'identity.json' );
                             let peerJson = JSON.parse(identityModel);
@@ -69,12 +69,26 @@ app.get( '/start-ngrok', ( req, res ) => {
                             console.log( 'Add peer ID: ' + peerID + '\n' );
                             let origin = 'origin.zeros.run'
                             let input = JSON.parse( '{"peerID":"'+ peerID +'", "url":"'+ url +'", "origin":"'+ origin +'"}' );
-                            json = JSON.stringify( input );
+                            json = JSON.stringify( input, null, 4 );
                             fs.writeFile( dir + 'peers.json', json, ( err ) => {
                                 if ( err ) throw err;
                                 console.log( 'Saved peer to peers list.\n' );
                             })
                         }
+                    } else {
+                        let identityModel = fs.readFileSync( dir + 'identity.json' );
+                        let peerJson = JSON.parse(identityModel);
+                        let peerID = peerJson.peerID;
+                        console.log( 'Add peer ID: ' + peerID + '\n' );
+                        let origin = 'origin.zeros.run'
+                        let peersList = [];
+                        peersList.push( JSON.parse( data ) );
+                        peersList.push( { "peerID": peerID, "url": url, "origin": origin } );
+                        let json = JSON.stringify( peersList, null, 4 );
+                        fs.writeFile( dir + 'peers.json', json, ( err ) => {
+                            if ( err ) throw err;
+                            console.log( 'Saved peer to peers list.\n' );
+                        })
                     }
                 });
             })

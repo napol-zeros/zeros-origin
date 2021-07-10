@@ -37,7 +37,7 @@ function createNode () {
                     console.log( 'Peer ID: ' + peerID + '\n' );
                     let date = new Date();
                     let input = JSON.parse( '{"peerID":"'+ peerID +'", "date":"'+ date +'"}' );
-                    json = JSON.stringify( input );
+                    json = JSON.stringify( input, null, 4 );
                     fs.writeFile( dir + 'identity.json', json, ( err ) => {
                         if ( err ) throw err;
                         console.log( 'Saved peer id.\n' );
