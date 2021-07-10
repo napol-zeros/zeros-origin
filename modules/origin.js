@@ -28,8 +28,8 @@ function createNode () {
         fs.mkdirSync( dir );
     }
     /** Create identity file if not exist. */
-    if ( !fs.existsSync( dir + 'identity' ) ){
-        fs.open( dir + 'identity','r',function( err ){
+    if ( !fs.existsSync( dir + 'identity.json' ) ){
+        fs.open( dir + 'identity.json','r',function( err ){
             if ( err ) {
                 obj = JSON.parse( '{}' );
                 if ( Object.keys(obj).length === 0 ) {
@@ -38,7 +38,7 @@ function createNode () {
                     let date = new Date();
                     let input = JSON.parse( '{"peerID":"'+ peerID +'", "date":"'+ date +'"}' );
                     json = JSON.stringify( input );
-                    fs.writeFile( dir + 'identity', json, ( err ) => {
+                    fs.writeFile( dir + 'identity.json', json, ( err ) => {
                         if ( err ) throw err;
                         console.log( 'Saved peer id.\n' );
                     });

@@ -59,18 +59,18 @@ app.get( '/start-ngrok', ( req, res ) => {
                 console.log('Peer sent: ' + url);
                 wsp.send(url);
                 /** Add peer to peers list. */
-                fs.open( dir + 'peers','r',function( err ){
+                fs.open( dir + 'peers.json','r',function( err ){
                     if ( err ) {
                         obj = JSON.parse( '{}' );
                         if ( Object.keys(obj).length === 0 ) {
-                            let identityModel = fs.readFileSync( dir + 'identity' );
+                            let identityModel = fs.readFileSync( dir + 'identity.json' );
                             let peerJson = JSON.parse(identityModel);
                             let peerID = peerJson.peerID;
                             console.log( 'Add peer ID: ' + peerID + '\n' );
                             let origin = 'origin.zeros.run'
                             let input = JSON.parse( '{"peerID":"'+ peerID +'", "url":"'+ url +'", "origin":"'+ origin +'"}' );
                             json = JSON.stringify( input );
-                            fs.writeFile( dir + 'peers', json, ( err ) => {
+                            fs.writeFile( dir + 'peers.json', json, ( err ) => {
                                 if ( err ) throw err;
                                 console.log( 'Saved peer to peers list.\n' );
                             })
