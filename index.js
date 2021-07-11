@@ -49,10 +49,10 @@ app.get( '/', ( req, res ) => {
 
 /** Start ngrok for access to local. */
 app.get( '/start-ngrok', ( req, res ) => {
-
     fs.readFile( dir + 'peers.json', 'utf8', (err, data) => {
         if ( err ) {
             console.log( 'No peers list.\n' );
+            res.sendFile (path.join( __dirname + '/html/index.html') );
         } else {
             let identityModel = fs.readFileSync( dir + 'identity.json' );
             let peerJson = JSON.parse(identityModel);
