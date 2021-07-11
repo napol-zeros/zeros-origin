@@ -150,6 +150,8 @@ app.get( '/close-ngrok', ( req, res ) => {
             });
         })();
         res.sendFile( path.join(__dirname + '/html/disconnect.html' ));
+    } else {
+        res.sendFile (path.join( __dirname + '/html/index.html') );
     }
 });
 
